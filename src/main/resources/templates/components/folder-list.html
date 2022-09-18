@@ -7,7 +7,7 @@
         <div class="card-header" th:text="${panelName}">Folders</div>
         <div class="card-body">
             <div class="list-group">
-                <a th:href="@{'/?folder=' + ${folder.label}}"
+                <a th:href="@{'/?folderName=' + ${folder.label}}"
                    class="
                     list-group-item
                     d-flex
@@ -17,7 +17,6 @@
                    th:each="folder : ${folders}">
 
                     <span th:text="${folder.label}">Folder</span>
-<!--                    <span th:if="${folderToUnreadCounts.get(folder.label)}" th:text="${folderToUnreadCounts.get(folder.label)}" class="badge bg-primary rounded-pill">15</span>-->
                 </a>
             </div>
         </div>

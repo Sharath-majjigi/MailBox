@@ -8,10 +8,10 @@ spring:
       password: BfgnppCWB-MLHc_.rII,rSyq6cPqLGO0c4+bGkZ9rSzs9khQorQNU-C,3hR+EijiTZ33NL_yFeCjuYgUxXtmBwFeDNmg6z5do5o6wq4KiCRxtxw,3mTmI5jrc52BUasn
       schema-action: recreate_drop_unused
       request:
-        timeout: 10s
+        timeout: 11s
       connection:
-        connect-timeout: 10s
-        init-query-timeout: 10s
+        connect-timeout: 11s
+        init-query-timeout: 11s
   security:
     oauth2:
       client:
