@@ -1,6 +1,8 @@
 package com.sharath.mailbox.Controllers;
 
+import com.sharath.mailbox.Models.Email;
 import com.sharath.mailbox.Models.Folder;
+import com.sharath.mailbox.Repository.EmailDAO;
 import com.sharath.mailbox.Repository.FolderDAO;
 import com.sharath.mailbox.Services.EmailService;
 import com.sharath.mailbox.Services.FoldersService;
@@ -14,10 +16,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import javax.annotation.Nullable;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -32,10 +32,14 @@ public class ComposeMessageController {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    EmailDAO emailDAO;
+
 
     @GetMapping("/compose")
     public String getComposeMailPage(@AuthenticationPrincipal OAuth2User principal,
                             @RequestParam(required = false) String to,
+                            @RequestParam(required = false) UUID id,
                             Model model) {
 
 
@@ -49,29 +53,31 @@ public class ComposeMessageController {
         model.addAttribute("userFolders", userFolders);
         List<Folder> defaultFolders = foldersService.init(userId);
         model.addAttribute("defaultFolders", defaultFolders);
-        model.addAttribute("stats",foldersService.mapCoutToLabels(userId));
+        model.addAttribute("stats",foldersService.mapCountToLabels(userId));
+        model.addAttribute("userName",principal.getAttribute("login").toString());
 
 
-        List<String> uniqueToIds=splitIds(to);
+        List<String> uniqueToIds=emailService.splitIds(to);
         model.addAttribute("toIds",String.join(",",uniqueToIds));
+
+
+
+       if(id!=null){
+           Optional<Email> optionalEmail=emailDAO.findById(id);
+           if(optionalEmail.isPresent()){
+               Email email=optionalEmail.get();
+            if(emailService.hasAccess(userId,email)){
+               model.addAttribute("subject",emailService.getReplySubject(email.getSubject()));
+               model.addAttribute("body",emailService.getReplyBody(email));
+               }
+           }
+       }
+
+
+
 
         return "compose-page";
     }
-
-    public List<String> splitIds(String to){
-        if(!StringUtils.hasText(to)) {
-            return new ArrayList<>();
-        }
-        String[] splitIds= to.split(",");
-        List<String> uniqueToIds= Arrays.asList(splitIds)
-                .stream()
-                .map(id -> StringUtils.trimWhitespace(id))
-                .filter(id -> StringUtils.hasText(id))
-                .distinct()
-                .collect(Collectors.toList());
-        return uniqueToIds;
-    }
-
     @PostMapping("/sendMail")
     public ModelAndView sendMail(@RequestBody MultiValueMap<String,String> formData,
                                  @AuthenticationPrincipal OAuth2User principal){
@@ -80,11 +86,12 @@ public class ComposeMessageController {
             return new ModelAndView("redirect:/");
         }
         String from=principal.getAttribute("login");
-        List<String> toIds=splitIds(formData.getFirst("toIds"));
+        List<String> toIds=emailService.splitIds(formData.getFirst("toIds"));
         String subject=formData.getFirst("subject");
         String body=formData.getFirst("body");
         emailService.sendMail(from,toIds,subject,body);
 
         return new ModelAndView("redirect:/");
     }
+
 }

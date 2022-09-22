@@ -31,7 +31,7 @@ public class FoldersService {
         return defaultFolders;
     }
 
-    public Map<String,Integer> mapCoutToLabels(String userId){
+    public Map<String,Integer> mapCountToLabels(String userId){
         List<UnreadEmailStats> unreadEmailStats=unreadEmailStatsDAO.findAllById(userId);
         return unreadEmailStats.stream()
                 .collect(Collectors.toMap(UnreadEmailStats::getLabel,UnreadEmailStats::getUnreadCount));

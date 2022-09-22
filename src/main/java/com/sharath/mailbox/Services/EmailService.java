@@ -9,8 +9,12 @@ import com.sharath.mailbox.Repository.EmailItemDAO;
 import com.sharath.mailbox.Repository.UnreadEmailStatsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmailService {
@@ -44,6 +48,34 @@ public class EmailService {
         sentItems.setRead(true);
         emailItemDAO.save(sentItems);
 
+    }
+
+    public List<String> splitIds(String to){
+        if(!StringUtils.hasText(to)) {
+            return new ArrayList<>();
+        }
+        String[] splitIds= to.split(",");
+        List<String> uniqueToIds= Arrays.asList(splitIds)
+                .stream()
+                .map(id -> StringUtils.trimWhitespace(id))
+                .filter(id -> StringUtils.hasText(id))
+                .distinct()
+                .collect(Collectors.toList());
+        return uniqueToIds;
+    }
+    public boolean hasAccess(String userId,Email email){
+        return (userId.equals(email.getFrom()) || email.getTo().contains(userId));
+
+    }
+
+    public String getReplySubject(String subject){
+        return "Re " + subject;
+    }
+    public String getReplyBody(Email email){
+        return "\n\n\n----------------------------------\n"+
+                "From: " + email.getFrom() + "\n"+
+                "To: " + email.getTo() + "\n"+
+                email.getBody();
     }
 
     private EmailListItem createEmailListItem(List<String> to, String subject, Email email, String itemOwner,String folder) {

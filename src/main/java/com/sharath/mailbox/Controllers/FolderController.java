@@ -37,13 +37,13 @@ public class FolderController {
     EmailItemDAO emailItemDAO;
 
     @Autowired
-    EmailDAO emailDAO;
-
-    @Autowired
     EmailService emailService;
 
     @Autowired
     UnreadEmailStatsDAO unreadEmailStatsDAO;
+
+    @Autowired
+    EmailDAO emailDAO;
 
     private PrettyTime prettyTime = new PrettyTime();
 
@@ -62,44 +62,16 @@ public class FolderController {
         folderDAO.save(new Folder("Sharath-majjigi","Friends","Red"));
 
 //        unreadEmailStatsDAO.incrementUnreadCount("Sharath-majjigi","Inbox");
-//        unreadEmailStatsDAO.incrementUnreadCount("Sharath-majjigi","Inbox");
-//        unreadEmailStatsDAO.incrementUnreadCount("Sharath-majjigi","Inbox");
         String userId=principal.getAttribute("login");
 
-        EmailListKey emailListKey=new EmailListKey();
-        for(int i=0; i<2; i++){
-//            emailListKey.setId("Sharath-majjigi");
-//            emailListKey.setLabel("Inbox");
-//            emailListKey.setTimeId(Uuids.timeBased());
-//
-//            EmailListItem emailListItem=new EmailListItem();
-//            emailListItem.setId(emailListKey);
-//            emailListItem.setTo(List.of("Sharath","Bharath"));
-//            emailListItem.setFrom("God");
-//            emailListItem.setSubject("subject"+i);
-//            emailListItem.setRead(false);
-//            emailItemDAO.save(emailListItem);
-//
-//            Email email=new Email();
-//            email.setId(emailListKey.getTimeId());
-//            email.setTo(emailListItem.getTo());
-//            email.setFrom(emailListItem.getFrom());
-//            email.setSubject(emailListItem.getSubject());
-//            email.setBody("Body "+i);
-//            emailDAO.save(email);
-            emailService.sendMail("Sharath-majjigi", Arrays.asList("abc,god,me"),"Hello"+i,"Body"+i);
-        }
-
         //Fetch Folders
-
-
         List<Folder> userFolders=folderDAO.findAllById(userId);
         model.addAttribute("userFolders", userFolders);
 
         List<Folder> defaultFolders=foldersService.init(userId);
         model.addAttribute("defaultFolders",defaultFolders);
 
-        model.addAttribute("stats",foldersService.mapCoutToLabels(userId));
+        model.addAttribute("stats",foldersService.mapCountToLabels(userId));
 
         //Fetch message
         if(!StringUtils.hasText(folder)){
@@ -114,7 +86,8 @@ public class FolderController {
 
         model.addAttribute("emailList", emails);
         model.addAttribute("folderName",folder);
-        System.out.println(principal.getAttribute("login").toString());
+        //System.out.println(principal.getAttribute("login").toString());
+        model.addAttribute("userName",principal.getAttribute("login").toString());
        return "mailbox-page";
     }
 

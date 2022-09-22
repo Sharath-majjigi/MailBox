@@ -1,6 +1,4 @@
 package com.sharath.mailbox.Controllers;
-
-import com.datastax.oss.driver.api.core.uuid.Uuids;
 import com.sharath.mailbox.Models.Email;
 import com.sharath.mailbox.Models.EmailListItem;
 import com.sharath.mailbox.Models.EmailListKey;
@@ -9,6 +7,7 @@ import com.sharath.mailbox.Repository.EmailDAO;
 import com.sharath.mailbox.Repository.EmailItemDAO;
 import com.sharath.mailbox.Repository.FolderDAO;
 import com.sharath.mailbox.Repository.UnreadEmailStatsDAO;
+import com.sharath.mailbox.Services.EmailService;
 import com.sharath.mailbox.Services.FoldersService;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,9 @@ public class EmailViewController {
     @Autowired
     UnreadEmailStatsDAO unreadEmailStatsDAO;
 
+    @Autowired
+    EmailService emailService;
+
 
     private PrettyTime prettyTime = new PrettyTime();
 
@@ -62,6 +64,8 @@ public class EmailViewController {
         model.addAttribute("userFolders", userFolders);
         List<Folder> defaultFolders=foldersService.init(userId);
         model.addAttribute("defaultFolders",defaultFolders);
+        model.addAttribute("userName",principal.getAttribute("login").toString());
+
 
         Optional<Email> email=emailDAO.findById(id);
         if (email.isEmpty()){
@@ -69,8 +73,18 @@ public class EmailViewController {
         }
 
         String toIds=String.join(",",email.get().getTo());
+
+  //      Checking whether user is allowed to view Mail
+        if(!emailService.hasAccess(userId,email.get())){
+            return "redirect:/";
+        }
+
         model.addAttribute("email",email.get());
         model.addAttribute("toIds",toIds);
+
+
+
+        //For Unread And Read Mails
 
         EmailListKey key=new EmailListKey();
         key.setId(userId);
@@ -87,7 +101,7 @@ public class EmailViewController {
             }
         }
 
-        model.addAttribute("stats",foldersService.mapCoutToLabels(userId));
+        model.addAttribute("stats",foldersService.mapCountToLabels(userId));
 
         return "email-page";
 

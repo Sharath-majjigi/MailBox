@@ -20,6 +20,7 @@ spring:
             client-id: Iv1.9785222cbf164dcb
             client-secret: 4a4e840e28eaa41e36c7da91e79772062dabbb2d
 
+
 datastax.astra:
   secure-connect-bundle: secure-connect-mailbox.zip
 

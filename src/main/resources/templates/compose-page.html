@@ -20,6 +20,7 @@
     <style>
         .container {
             display: grid;
+            margin-top: 20px;
 
             grid-template-areas:
     "header header header"
@@ -58,7 +59,10 @@
 <body>
 <div class="container">
     <header>
-        <p>Hello ,Name</p>
+        <h3>
+            MailBox App
+            <small class="text-muted" th:text="${userName}"></small>
+        </h3>
     </header>
 
     <nav>
@@ -88,11 +92,11 @@
                     </br>
                     <div class="form-group">
                         <label for="subject">Subject</label>
-                        <input type="text" class="form-control" name="subject" id="subject"></br>
+                        <input type="text" th:value="${subject}" class="form-control" name="subject" id="subject"></br>
                     </div>
                     <div class="form-group">
                         <label for="body">Body</label>
-                        <textarea rows="10" type="text" class="form-control" name="body" id="body"></textarea>
+                        <textarea rows="10" th:text="${body}" type="text" class="form-control" name="body" id="body"></textarea>
                         </br>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
