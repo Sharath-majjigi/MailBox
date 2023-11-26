@@ -15,7 +15,7 @@ A secure Email parody app where users can connect and officially talk with their
 2. [Non-Functional Requirements](#non-functional-requirements)
 3. [Database Design](#database-design)
 4. [High Level Diagram](#high-level-diagram)
-5. [APIs](#apis-to-build)
+5. [APIs](#apis)
 6. [Tech Stack Used](#tech-stack-used)
 
 ## Functional Requirements:
@@ -61,7 +61,7 @@ A secure Email parody app where users can connect and officially talk with their
 ## High Level Diagram:
 ![HLD](https://i.ibb.co/R7KqtNf/image1.png)
 
-## APIs to Build:
+## APIs:
 
 1. `GET /homepage`
 2. `GET /composeMessage`
