@@ -94,12 +94,30 @@ git clone https://github.com/Sharath-majjigi/MailBox
 2. Follow [this tutorial](https://spring.io/guides/gs/accessing-data-cassandra/) to connect the database to the application.
 3. Update the `application.yml` file with the keys generated during the setup.
 
+## Step 3: Build Image
 
-## Step 3: Log In with Your GitHub Account
+1. First make sure you have docker on your machine if not install one [docs](https://docs.docker.com/engine/install/)
+2. Once the docker daemon is up, run the command:
+   
+   ``docker build -t your_image_name .``
+   
+   which will build docker image of the MailBox application.
+4. To run the image you can execute:
+   
+   ``docker run your_image_name``
+   
+   to run it in detached mode you can execute :
+   
+   ``docker run -d your_image_name``
+   
+6. Now you can access mailbox application on the ports you have exposed, by default mailbox runs in 8080 port: ``http://localhost:8080``
+
+
+## Step 4: Log In with Your GitHub Account
 
 Use your GitHub credentials to log in to the application.
 
-## Step 4: Compose and Send a Message
+## Step 5: Compose and Send a Message
 
 1. Enter the GitHub username(s) in the "To" address.
 2. Add a subject and body to your message.
